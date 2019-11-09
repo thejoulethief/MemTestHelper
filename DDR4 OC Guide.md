@@ -9,6 +9,7 @@
       4. [Expected Max Frequency](#expected-max-frequency)
       5. [Binning](#binning)
       6. [Maximum Recommended Daily Voltage](#maximum-recommended-daily-voltage)
+      7. [Ranking](#ranking)
    3. [Integrated Memory Controller (IMC)](#integrated-memory-controller-imc)
       1. [Intel - LGA1151](#intel---lga1151)
       2. [AMD - AM4](#amd---am4)
@@ -27,6 +28,9 @@
 * Make sure your UEFI is up to date.
 * [Thaiphoon](http://www.softnology.biz/files.html) to show what ICs (integrated circuits or RAM chips) your sticks use. This will give you an idea of what frequency and timings to expect.
 * [MemTestHelper](https://github.com/integralfx/MemTestHelper/releases) or your memory tester of choice. [Karhu RAM Test](https://www.karhusoftware.com/ramtest/) (paid) is also a good choice. I wouldn't recommend AIDA64 memory test and [Memtest64](https://forums.anandtech.com/threads/techpowerups-memtest-64-is-it-better-than-hci-memtest-for-determining-stability.2532209/) as they are both not very good at finding memory errors.
+* [TM5](http://testmem.tz.ru/tm5.rar) with the [extreme config by anta777](https://drive.google.com/file/d/1uegPn9ZuUoWxOssCP4PjMjGW9eC_1VJA) seems to be faster than Karhu RAMTest at finding errors. One user has thoroughly tested it and they couldn't seem to fool it. YMMV.
+  * Make sure to load the config. It should say 'Customize: Extreme1 @anta777' if loaded.
+  * Credits: [u/nucl3arlion](https://www.reddit.com/r/overclocking/comments/dlghvs/micron_reve_high_training_voltage_requirement/f4zcs04/)
 * To view timings in Windows: 
   * Intel: [Asrock Timing Configurator v4.0.4](https://www.asrock.com/MB/Intel/X299%20OC%20Formula/index.asp#Download) (don't need an Asrock motherboard, though EVGA motherboards don't seem to work with this).
   * AMD: 
@@ -39,6 +43,8 @@
   * [HWBOT x265 Benchmark](https://hwbot.org/benchmark/hwbot_x265_benchmark_-_1080p/) - I've heard that this benchmark is also sensitive to memory, but I haven't really tested it myself.
 
 # Expectations/Limitations
+* This section goes through 3 components that may influence your overclocking experience: ICs, motherboard and IMC.
+
 ## Motherboard
 * Motherboards with 2 DIMM slots will be able to achieve the highest frequencies.
 * For motherboards with 4 DIMM slots, the number of sticks installed will affect your maximum memory frequency. 
@@ -65,18 +71,21 @@
 * On many ICs, tCL scales with voltage, meaning giving it more voltage can allow you to drop tCL. Conversely, tRCD and tRP typically do not scale with voltage on many ICs, meaning no matter how much voltage you pump into it, it will not budge.  
 As far as I know, tCL, tRCD, tRP and possibly tRFC can (or can not) see voltage scaling.
 * Similarly, if a timing scales with voltage that means you can increase the voltage to run the same timing at a higher frequency.
-![8Gbit CJR CL11 Voltage Scaling](https://i.imgur.com/TSiwR7H.png)
-  * You can see that tCL scales linearly with voltage on 8Gb CJR.
+![CL11 Voltage Scaling](https://i.imgur.com/wgazx4r.png)
+  * You can see that tCL scales almost linearly up to 2533 with voltage on 8Gb CJR.
+  * tCL on B-die has perfect linear scaling with voltage.
 * Some older Micron ICs (before Rev. E), are known to scale negatively with voltage. That is, they become unstable at the same frequency and timings just by increasing the voltage (usually above 1.35v).
 * Here are a table of common ICs and if the timing scales with voltage:
 
-  | IC | tCL | tRCD | tRP |
-  | :-: | :-: | :--: | :-: |
-  | 8Gb AFR | Y | N | N | 
-  | 8Gb CJR | Y | Y (?) | N |
-  | 8Gb Rev. E | Y | N | Y |
-  | 8Gb B-die | Y | Y | Y |
+  | IC         | tCL | tRCD | tRP | tRFC |
+  | :-:        | :-: | :--: | :-: | :--: |
+  | 8Gb AFR    | Y   | N    | N   | ?    | 
+  | 8Gb CJR    | Y   | N    | N   | Y    |
+  | 8Gb Rev. E | Y   | N    | Y   | ?    |
+  | 8Gb B-die  | Y   | Y    | Y   | Y    |
   * The timings that don't scale with voltage usually need to be increased as you increase frequency.
+  ![B-die tRFC Voltage Scaling](https://i.imgur.com/0IZAy8P.png)
+  Note: tRFC is in clock cycles (ticks) not time (ns).
   
 ### Expected Max Frequency
 * Below are the expected max frequency for some of the common ICs:
@@ -100,12 +109,17 @@ As far as I know, tCL, tRCD, tRP and possibly tRFC can (or can not) see voltage 
   No.  
   tRCD doesn't scale with voltage, which means it needs to be increased as you increase frequency.  
   `3000 / 16 = 187.5` but `3200 / 18 = 177.78`.  
-  As you can see, 3000 15-16-16 is a tighter bin than 3200 16-18-18. This means that a kit rated for 3000 15-16-16 will probably be able to do 3200 16-18-18 but a kit rated for 3200 16-18-18 might not be able to do 3000 15-16-16.
+  As you can see, 3000 15-16-16 is a tighter bin than 3200 16-18-18. This means that a kit rated for 3000 15-16-16 will probably be able to do 3200 16-18-18 but a kit rated for 3200 16-18-18 might not be able to do 3000 15-16-16. The frequency and timings difference is pretty small, so they'll probably overclock very similarly.
   
 ### Maximum Recommended Daily Voltage
 * [JEDEC (p.174)](http://www.softnology.biz/pdf/JESD79-4B.pdf) specifies that the absolute maximum is 1.50v.
   > Stresses greater than those listed under “Absolute Maximum Ratings” may cause permanent damage to the device. This is a stress rating only and functional operation of the device at these or any other conditions above those indicated in the operational sections of this specification is not implied. Exposure to absolute maximum rating conditions for extended periods may affect reliability.
 * That being said, I'd only recommend running 1.50v on B-die as it's known to have high voltage tolerance. At least for the common ICs (4/8Gb AFR, 8Gb CJR, 8Gb Rev. E, 4/8Gb MFR), the max recommended voltage is 1.45v. Some of the lesser known ICs like [8Gb C-die](https://www.hardwareluxx.de/community/f13/samsung-8gbit-ddr4-c-die-k4a8g045wc-overclocking-ergebnisse-im-startbeitrag-1198323.html) have been reported to scale negatively or even die above 1.20v, though YMMV.
+  
+### Ranking
+* Below is how most of the common ICs rank in terms of frequency and timings.
+* 8Gb B-die > 8Gb Micron Rev. E > 8Gb CJR > 4Gb E-die > 8Gb AFR > 4Gb D-die > 8Gb MFR > 4Gb S-die
+  * Based off [buildzoid's ranking](https://www.reddit.com/r/overclocking/comments/8cjla5/the_best_manufacturerdie_of_ddr_ram_in_order/dxfgd4x/).
   
 ## Integrated Memory Controller (IMC)
 ### Intel - LGA1151
@@ -131,7 +145,16 @@ As far as I know, tCL, tRCD, tRP and possibly tRFC can (or can not) see voltage 
   On Ryzen 2000 (possibly 1000 and 3000 as well), above 1.15v can negatively impact overclocking.
   > There are clear differences in how the memory controller behaves on the different CPU specimens. The majority of the CPUs will do 3466MHz or higher at 1.050V SoC voltage, however the difference lies in how the different specimens react to the voltage. Some of the specimens seem scale with the increased SoC voltage, while the others simply refuse to scale at all or in some cases even illustrate negative scaling. All of the tested samples illustrated negative scaling (i.e. more errors or failures to train) when higher than 1.150V SoC was used. In all cases the maximum memory frequency was achieved at =< 1.100V SoC voltage.  
   [~ The Stilt](https://forums.anandtech.com/threads/ryzen-strictly-technical.2500572/page-72#post-39391302)
-  * On Ryzen 3000, there's also CLDO_VDDG (not to be confused with CLDO_VDD**P**), which is the voltage to the Infinity Fabric. I've read that SOC voltage should be 40mV above CLDO_VDDG, but other than that there's not much information about it.
+  * On Ryzen 3000, there's also CLDO_VDDG (not to be confused with CLDO_VDD**P**), which is the voltage to the Infinity Fabric. I've read that SOC voltage should be at least 40mV above CLDO_VDDG, but other than that there's not much information about it.
+    > Most cLDO voltages are regulated from the two main power rails of the CPU. In case of cLDO_VDDG and cLDO_VDDP, they are regulated from the VDDCR_SoC plane.
+Because of this, there are couple rules. For example, if you set the VDDG to 1.100V, while your actual SoC voltage under load is 1.05V the VDDG will stay roughly at 1.01V max.
+Likewise if you have VDDG set to 1.100V and start increasing the SoC voltage, your VDDG will raise as well. I don't have the exact figure, but you can assume that the minimum drop-out voltage (Vin-Vout) is around 40mV.
+Meaning you ACTUAL SoC voltage has to be at least by this much higher, than the requested VDDG for it to take effect as it is requested.  
+Adjusting the SoC voltage alone, unlike on previous gen. parts doesn't do much if anything at all.
+The default value is fixed 1.100V and AMD recommends keeping it at that level. Increasing the VDDG helps with the fabric overclocking in certain scenarios, but not always.
+1800MHz FCLK should be doable at the default 0.9500V value and for pushing the limits it might be beneficial to increase it to =< 1.05V (1.100 - 1.125V SoC, depending on the load-line).  
+  [~ The Stilt](https://www.overclock.net/forum/28031966-post35.html)
+
 * Below are the expected frequency ranges for 2 single rank DIMMs, provided your motherboard and ICs are capable:
 
   | Ryzen | Expected Frequency (MHz) |
@@ -168,15 +191,29 @@ As far as I know, tCL, tRCD, tRP and possibly tRFC can (or can not) see voltage 
   | 2000 | 60 - 70 |
   | 3000 | 65 - 75 (1:1 MCLK:FCLK) <br/> 75+ (2:1 MCLK:FCLK) |
 * On Ryzen 3000, high enough FCLK can overcome the penalties from desynchronising MCLK and FCLK, provided that you can lock your UCLK to MCLK.
-  * [Chart](https://i.imgur.com/F9HpkO2.png) (credits: [buildzoid](https://www.youtube.com/watch?v=10pYf9wqFFY))
+  ![Chart](https://i.imgur.com/F9HpkO2.png) 
+  * (Credits: [buildzoid](https://www.youtube.com/watch?v=10pYf9wqFFY))
   
 # Overclocking
 * Disclaimer: The silicon lottery will affect your overclocking potential so there may be some deviation from my suggestions.
+* The overclocking process is pretty simple and boils down to 3 steps:
+  * Set very loose (high) timings.
+  * Increase DRAM frequency until unstable.
+  * Tighten (lower) timings.
 
 ## Finding the Maximum Frequency
-1. On Intel, start off with 1.15v VCCSA and VCCIO. On AMD, start off with 1.10v SOC.
-2. Set DRAM voltage to 1.40v. If you're using Micron/SpecTek ICs, exluding Rev. E, set 1.35v.
+1. On Intel, start off with 1.15v VCCSA and VCCIO.  
+   On AMD, start off with 1.10v SOC.
+   * SOC voltage might be named differently depending on the manufacturer.
+     * Asrock: SOC Overclock VID hidden in the AMD CBS menu.
+       * [VID values](https://www.reddit.com/r/Amd/comments/842ehb/asrock_ab350_pro4_guide_bios_overclocking_raven/).
+     * Asus: VDDCR SOC.
+     * Gigabyte: Dynamic Vcore SOC.
+       * Note that this is an offset voltage. The base voltage can change automatically when increasing DRAM frequency. +0.100v at 3000MHz might result in 1.10v actual, but +0.100v at 3400MHz might result in 1.20v actual.
+     * MSI: CPU NB/SOC.
+2. Set DRAM voltage to 1.40v. If you're using Micron/SpecTek ICs, excluding Rev. E, set 1.35v.
 3. Set primary timings to 16-20-20-40 (tCL-tRCD-tRP-tRAS).
+   * See [this post](https://redd.it/ahs5a2) for more information on these timings.
 4. Increase the DRAM frequency until it doesn't boot into Windows any more. Keep in mind the expectations detailed above.
    * If you're on Intel, a quick way of knowing if you're unstable is to examine the RTLs and IOLs. Each group of RTLs and IOLs correspond to a channel. Within each group, there are 2 values which correspond to each DIMM.  
    [Asrock Timing Configurator](https://i.imgur.com/EQBl2wd.jpg)  
@@ -205,7 +242,7 @@ As far as I know, tCL, tRCD, tRP and possibly tRFC can (or can not) see voltage 
    * Set tCCDL to 8. Asus UEFIs don't expose this timing.
    
    Ryzen 3000:
-   * Desynchronising MCLK and FCLK can incur a massive latency penalty, so you're better off tightening timings to keep your MCLK:FCLK 1:1.
+   * Desynchronising MCLK and FCLK can incur a massive latency penalty, so you're better off tightening timings to keep your MCLK:FCLK 1:1. See [AMD - AM4](#amd---am4) for more information.
    * Otherwise, set FCLK to whatever is stable (1600MHz if you're unsure).
 2. Loosen primary timings to 18-22-22-42.
 3. Increase DRAM voltage to 1.45v.
@@ -250,9 +287,10 @@ As far as I know, tCL, tRCD, tRP and possibly tRFC can (or can not) see voltage 
 3. Next are the primary timings (tCL, tRCD, tRP).
    * Start with tCL and drop that by 1 until you get instability.
    * Do the same with tRCD and tRP.
-   * After the above timings are as tight as they can go, set `tRAS = tCL + tRCD(RD) + 2` and `tRC = tRP + tRAS`.
+   * After the above timings are as tight as they can go, set `tRAS = tCL + tRCD(RD) + 2`<sup>1</sup> and `tRC = tRP + tRAS`.
      * Setting tRAS lower than this can incur a [performance penalty](https://www.overclock.net/forum/25801780-post3757.html).
      * tRC is only available on AMD and some Intel UEFIs.
+     * <sup>1</sup>Micron Rev. E seems to need tRAS = tCL + tRCD(RD) + 4 (or at least my kit does).
      
 4. Next is tRFC. Default for 8Gb ICs is 350**ns** (note the units).
    * To convert to ns: `2000 * timing / ddr_freq`.  
