@@ -338,8 +338,31 @@ The default value is fixed 1.100V and AMD recommends keeping it at that level. I
         It's typically not a good idea to increase tREFI too much as ambient temperature changes (e.g. winter to summer) can be enough to cause instability.
     
 7. You can also increase DRAM voltage to drop timings even more. Keep in mind the [voltage scaling characteristics of your ICs](#voltage-scaling) and the [maximum recommended daily voltage](#maximum-recommended-daily-voltage).
-    
-## Troubleshooting (TO DO)
+   
+## Reaching the Limits
+* How do I tell if I've reached the limits of my motherboard/ICs/IMC?
+
+### Motherboard
+* Check the QVL of your motherboard and see what the maximum validated frequency is for the number of DIMMs you have. If you're around this frequency, then you've probably hit the limits of your motherboard. For example, the Z390 Aorus Master has validated 4 DIMMs at 4333, so you probably won't be able to go any higher than that with 4 DIMMs.
+* If you're running a Ryzen 3000 CPU on a B350/B450/X370/X470 motherboard, then this doesn't apply to you as the limitating factor was the IMC. See [buildzoid's video](https://www.youtube.com/watch?v=oYYKLl9lBYY).
+
+### IMC
+* Intel
+  * Increasing/decreasing VCCSA/VCCIO doesn't help.
+  * Playing around with termination resistances (RttNom, RttPark, RttWr) don't help.
+  
+* AMD
+  * Increasing/decreasing SOC voltage doesn't help.
+  * Increasing/decreasing CLDO_VDDG doesn't help.
+  * Playing around with ProcODT, drive strengths (ClkDrvStr, AddrCmdDrvStr, CsOdtCmdDrvStr, CkeDrvStr) and termination resistances don't help.
+   
+### ICs
+* See [expected max frequency](#expected-max-frequency) first.
+* Loosening timings don't help.
+* Increasing/decreasing DRAM voltage doesn't help.
+* Putting a fan over the DIMMs don't help.
+
+## Troubleshooting
 
 
 ## Miscellaneous Tips
