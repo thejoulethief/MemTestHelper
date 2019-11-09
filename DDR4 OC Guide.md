@@ -17,7 +17,7 @@
    1. [Finding the Maximum Frequency](#finding-the-maximum-frequency)
    2. [Trying Higher Frequencies](#trying-higher-frequencies)
    3. [Tightening Timings](#tightening-timings)
-   4. [Reaching the Limits](##reaching-the-limits)
+   4. [Reaching the Limits](#reaching-the-limits)
    5. [Miscellaneous Tips](#miscellaneous-tips)
       1. [Intel](#intel)
       2. [AMD](#amd)
