@@ -370,8 +370,8 @@ The default value is fixed 1.100V and AMD recommends keeping it at that level. I
   
 * My previous stable settings are now suddenly unstable.
   * This one is pretty hard to diagnose.
-  * It could be your motherboard being really bad at RAM OC. I know a few people with the B350-F Strix who have passed memtest over night, yet fail instantly upon next reboot.
-  * It could also be your IMC needing more voltage than you expected. For example, I had 4000 15-19-19 1.5v DRAM 1.20v VCCSA/VCCIO pass RAMTest 5000% (~1 hr) but the next reboot failed under 1000%. After playing around with termination resistances, DRAM voltage, an other obscure RAM settings, it turns out I need 1.27v VCCSA/VCCIO to be consistently stable.
+  * It could be your motherboard being really bad at RAM OC. I know a few people with the B350-F Strix who have passed memtest over night, yet fail under 30 minutes upon next reboot.
+  * It could also be your IMC needing more voltage than you expected. For example, I had 4000 15-19-19 1.5v DRAM 1.20v VCCSA/VCCIO pass RAMTest 5000% (~1 hr) but the next reboot failed under 1000%. After playing around with termination resistances, DRAM voltage, and other obscure RAM settings, it turns out I need 1.27v VCCSA/VCCIO to be consistently stable.
 
 ## Miscellaneous Tips
 * Usually a 200MHz increase in DRAM frequency negates the latency penalty of loosening tCL, tRCD and tRP by 1, but has the benefit of higher bandwidth.  
