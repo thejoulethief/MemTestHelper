@@ -18,7 +18,8 @@
    2. [Trying Higher Frequencies](#trying-higher-frequencies)
    3. [Tightening Timings](#tightening-timings)
    4. [Reaching the Limits](#reaching-the-limits)
-   5. [Miscellaneous Tips](#miscellaneous-tips)
+   5. [Troubleshooting](#troubleshooting)
+   6. [Miscellaneous Tips](#miscellaneous-tips)
       1. [Intel](#intel)
       2. [AMD](#amd)
 4. [Useful Information](#useful-information)
@@ -347,6 +348,12 @@ The default value is fixed 1.100V and AMD recommends keeping it at that level. I
 * Check the QVL of your motherboard and see what the maximum validated frequency is for the number of DIMMs you have. If you're around this frequency, then you've probably hit the limits of your motherboard. For example, the Z390 Aorus Master has validated 4 DIMMs at 4333, so you probably won't be able to go any higher than that with 4 DIMMs.
 * If you're running a Ryzen 3000 CPU on a B350/B450/X370/X470 motherboard, then this doesn't apply to you as the limitating factor was the IMC. See [buildzoid's video](https://www.youtube.com/watch?v=oYYKLl9lBYY).
 
+### ICs
+* See [expected max frequency](#expected-max-frequency) first.
+* Loosening timings don't help.
+* Increasing/decreasing DRAM voltage doesn't help.
+* Putting a fan over the DIMMs don't help.
+
 ### IMC
 * Intel
   * Increasing/decreasing VCCSA/VCCIO doesn't help.
@@ -356,15 +363,15 @@ The default value is fixed 1.100V and AMD recommends keeping it at that level. I
   * Increasing/decreasing SOC voltage doesn't help.
   * Increasing/decreasing CLDO_VDDG doesn't help.
   * Playing around with ProcODT, drive strengths (ClkDrvStr, AddrCmdDrvStr, CsOdtCmdDrvStr, CkeDrvStr) and termination resistances don't help.
-   
-### ICs
-* See [expected max frequency](#expected-max-frequency) first.
-* Loosening timings don't help.
-* Increasing/decreasing DRAM voltage doesn't help.
-* Putting a fan over the DIMMs don't help.
 
 ## Troubleshooting
-
+* I get an error very late into memtest.
+  * Try putting a fan over the DIMMs.
+  
+* My previous stable settings are now suddenly unstable.
+  * This one is pretty hard to diagnose.
+  * It could be your motherboard being really bad at RAM OC. I know a few people with the B350-F Strix who have passed memtest over night, yet fail instantly upon next reboot.
+  * It could also be your IMC needing more voltage than you expected. For example, I had 4000 15-19-19 1.5v DRAM 1.20v VCCSA/VCCIO pass RAMTest 5000% (~1 hr) but the next reboot failed under 1000%. After playing around with termination resistances, DRAM voltage, an other obscure RAM settings, it turns out I need 1.27v VCCSA/VCCIO to be consistently stable.
 
 ## Miscellaneous Tips
 * Usually a 200MHz increase in DRAM frequency negates the latency penalty of loosening tCL, tRCD and tRP by 1, but has the benefit of higher bandwidth.  
